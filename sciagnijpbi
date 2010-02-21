@@ -1,7 +1,9 @@
 #!/bin/bash
+# Copyright (C) 2010 Tomasz Dlugosz <tomek3d@gmail.com>
 #
-# based on sciagnijpbi.sh by
-# raf_k <at> wp.pl
+# Distributed under the terms of the GNU General Public License v3
+#
+# based on sciagnijpbi.sh by raf_k <at> wp.pl
 
 #spis tresci:
 #http://www.pbi.edu.pl/book_reader.php?p=50620&s=1
