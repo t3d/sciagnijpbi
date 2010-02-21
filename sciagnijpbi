@@ -46,8 +46,6 @@ else
  bookid=$1;
 fi
 
-page=1
-
 getget "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" cover
 
 #echo "Sprawdzam ilo¿¿ stron:"
