@@ -13,26 +13,19 @@
 #tutaj jest ilosc stron
 # http://www.pbi.edu.pl/left_1.php?p=50620&s=&w=
 #var pages = 846
-#publikacje/0000/050/620/0000050620-000003.jpg
-
 
 TMPDIR=$(mktemp -d)
 
-
-####Funkcje
-
 getget() {
-
 wget -o $TMPDIR/log.tmp -O"$TMPDIR/$2.html" "$1" &
-
 pid=$!
 
 i=1
- while [ $i -eq 1 ] ; do
-   ps -p $pid >/dev/null
-   i=$?; 
-   sleep 1
- done
+while [ $i -eq 1 ] ; do
+  ps -p $pid >/dev/null
+  i=$?;
+  sleep 1
+done
 }
 
 if [ -z $1 ] ; then
@@ -48,34 +41,25 @@ fi
 
 getget "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" cover
 
-#echo "Sprawdzam ilo¿¿ stron:"
+# check number of pages
 ii=`cat $TMPDIR/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
-
 dec=`echo "$ii" |wc -L`
 
-#echo "Sprawdzam tytu¿:"
+# check author and title
 tytul=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/[ \t]*$//'`
 autor=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/[ \t]*$//'`
-
 echo -e "\n[33mZnalazlem ksiazke:[0m"
-echo -e " Autor: $autor \n Tytul: $tytul"
-
-echo
+echo -e " Autor: $autor \n Tytul: $tytul\n"
 
 page=1
 
+# 'id=imgview'
 while [ $page -le $ii ] ; do
-
   source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${page}&w="
-
   file=`echo $page|awk {'printf "%0'${dec}'d",$1'}`
-
   echo -ne "\rSciagam strone $page / $ii "
-
   getget $source $file 
-
   page=`expr $page + 1`
-
 done
 
 echo -ne "[32m[ok][0m\nLacze pliki"
@@ -85,16 +69,10 @@ outputfile="${autor} - ${tytul}.htm"
 echo -e '<html>\n<head>\n<title>Polska Biblioteka Internetowa</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${outputfile}"
 
 for i in `ls -1 ${TMPDIR}/[0-9]*.html`; do
-
-#linia=`awk '/class=\"txt\"/ { print $0 }' $i`
-
-awk '/class=\"txt\"/ { print $0 }' $i >>"${outputfile}"
-
+	awk '/class=\"txt\"/ { print $0 }' $i >>"${outputfile}"
 done
 
 rm -fr $TMPDIR
-
 echo -e '</body>\n</html>' >>"${outputfile}"
-
 echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $outputfile"
 
