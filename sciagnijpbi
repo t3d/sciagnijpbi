@@ -8,14 +8,28 @@
 TMPDIR=$(mktemp -d)
 
 if [ -z $1 ] ; then
- echo "Nie podales id ksiazki, bez tego nic nie sciagne, wejdz na strone"
- echo "www.pbi.edu.pl otworz interesujaca cie pozycje, szukaj w adresie"
- echo '?p=XXXX np. echo http://www.pbi.edu.pl/content.php?p=50620&s=2&w='
- echo "Spis id jest rowniez w dolaczonym do skryptu katalogu"
- echo "Np. zeby sciagnac obrone Sokratesa nalezy wpisac sh sciagnijpbi.sh 1896"
- exit 1
+	echo "Nie podales id ksiazki. Bez id nic nie sciagne."
+	echo "Wejdz na strone www.pbi.edu.pl ,"
+	echo "otworz interesujaca Cie pozycje i znajdz w adresie"
+	echo '?p=XXXX np.'
+	echo 'http://www.pbi.edu.pl/content.php?p=50620&s=2&w='
+	echo
+	echo "Spis id jest rowniez w dolaczonym do skryptu katalogu"
+	echo -ne "\nPodaj id ksiazki, lub zero, by wyjsc: "
+	read bookid
+	if [ "$bookid" == "0" ] ; then
+		exit 1
+	fi
 else
- bookid=$1;
+	bookid=$1;
+fi
+
+# check if given id is a number
+if echo $bookid | grep "^[0-9]*$">/dev/null; then
+	echo "id ksiazki $bookid"
+else
+	echo "niepoprawne id ksiazki!"
+	exit 1
 fi
 
 wget -O"$TMPDIR/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" 2>/dev/null
