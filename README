@@ -1,0 +1,21 @@
+sciagnijpbi to skrypt do pobierania książek z Polskiej Biblioteki 
+Internetowej (www.pbi.edu.pl).
+
+Skrypt rozpoznaje i pobiera zarówno książki w postaci tekstowej (HTML), 
+jak i zeskanowane książki w formacie jpg.
+
+Aby pobrać książkę, należy znać jej id z katalogu PBI.
+Dla ułatwienia, spis książek wraz ich id znajduje się w pliku 
+Katalog_PBI.txt. Można też podejrzeć id książki podczas przeglądania 
+stron www PBI. Znajduje się ono w adresie okienka z widokiem strony 
+po znakach ?p=. Przykładowo dla książki "Dziwna Historia" Elizy 
+Orzeszkowej, adres ten to 
+http://www.pbi.edu.pl/book_reader.php?p=1870&s=1, zatem id to 1870.
+
+Id książki można podać jako parametr przy uruchamianiu skryptu, 
+bądź też wpisać po uruchomieniu skryptu.
+
+Skrypt działa pod systemami typu UNIX, GNU/Linux i Mac OS 
+wyposażonymi w powłokę bash i program wget. 
+Użytkownicy systemów z rodziny windows mogą korzystać ze skryptu 
+po zainstalowaniu programu cygwin (www.cygwin.com) wraz z pakietem wget.
