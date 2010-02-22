@@ -3,16 +3,7 @@
 #
 # Distributed under the terms of the GNU General Public License v3
 #
-# based on sciagnijpbi.sh by raf_k <at> wp.pl
-
-#spis tresci:
-#http://www.pbi.edu.pl/book_reader.php?p=50620&s=1
-#spis.php?p=50620&s=1&w=
-#konkretne strony
-#http://www.pbi.edu.pl/content.php?p=50620&s=2&w=
-#tutaj jest ilosc stron
-# http://www.pbi.edu.pl/left_1.php?p=50620&s=&w=
-#var pages = 846
+# based on sciagnijpbi.sh and sciagnijpbijpg.sh by raf_k <at> wp.pl
 
 TMPDIR=$(mktemp -d)
 
@@ -56,6 +47,19 @@ page=1
 TEST=`wget -O- "http://www.pbi.edu.pl/content.php?p=${bookid}&s=${page}" 2>/dev/null |grep 'id=imgview'`
 if [ "$TEST" != "" ] ; then
 	echo "pliki graficzne"
+	scrpattern=`echo $TEST|sed 's/.*src="\(.*\)-.*/\1/'`
+	while [ $page -le $ii ] ; do
+		printf "\rSciagam strone $page / $ii "
+		scrsrc=`printf "http://www.pbi.edu.pl/${scrpattern}-%06d.jpg" $page`
+		file=`echo $page|awk {'printf "%0'${dec}'d",$1'}`
+		wget -O "${TMPDIR}/${file}.jpg" $scrsrc 2>/dev/null
+		page=`expr $page + 1`
+	done
+	echo -e "[32m[ok][0m"
+
+	OUTDIR="${autor} - ${tytul}"
+	mv -- "$TMPDIR" "${OUTDIR}"
+	echo -e "[33mPliki zapisano w katalogu:[0m ${OUTDIR}"
 else
 	echo "pliki tekstowe"
 	while [ $page -le $ii ] ; do
@@ -77,6 +81,6 @@ else
 	done
 	echo -e '</body>\n</html>' >>"${outputfile}"
 	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $outputfile"
+	rm -fr "$TMPDIR"
 fi
 
-rm -fr $TMPDIR
