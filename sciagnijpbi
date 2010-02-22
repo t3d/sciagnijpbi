@@ -7,18 +7,6 @@
 
 TMPDIR=$(mktemp -d)
 
-getget() {
-wget -o $TMPDIR/log.tmp -O"$TMPDIR/$2.html" "$1" &
-pid=$!
-
-i=1
-while [ $i -eq 1 ] ; do
-  ps -p $pid >/dev/null
-  i=$?;
-  sleep 1
-done
-}
-
 if [ -z $1 ] ; then
  echo "Nie podales id ksiazki, bez tego nic nie sciagne, wejdz na strone"
  echo "www.pbi.edu.pl otworz interesujaca cie pozycje, szukaj w adresie"
@@ -30,7 +18,7 @@ else
  bookid=$1;
 fi
 
-getget "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" cover
+wget -O"$TMPDIR/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" 2>/dev/null
 
 # check number of pages
 ii=`cat $TMPDIR/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
@@ -41,6 +29,7 @@ tytul=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -
 autor=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/[ \t]*$//'`
 echo -e "\n[33mZnalazlem ksiazke:[0m"
 echo -e " Autor: $autor \n Tytul: $tytul\n"
+rm -f "${TMPDIR}/cover}"
 
 # check whether book is in HTML or images
 page=1
@@ -66,7 +55,7 @@ else
 		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${page}&w="
 		file=`echo $page|awk {'printf "%0'${dec}'d",$1'}`
 		echo -ne "\rSciagam strone $page / $ii "
-		getget $source $file 
+		wget -O"${TMPDIR}/${file}.html" "$source" 2>/dev/null
 		page=`expr $page + 1`
 	done
 
