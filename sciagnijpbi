@@ -87,6 +87,8 @@ else
 		awk '/class=\"txt\"/ { print $0 }' $i >>"${OUTPUT}"
 	done
 	echo -e '</body>\n</html>' >>"${OUTPUT}"
+	echo -ne " [32m[ok][0m\nPoprawiam formatowanie"
+	sed -e's/^[ \t]*<style.*<\/style>//' -i "$OUTPUT"
 	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $OUTPUT"
 	rm -fr "$TMPDIR"
 fi
