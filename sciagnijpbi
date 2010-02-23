@@ -81,7 +81,7 @@ else
 
 	OUTPUT="${AUTOR} - ${TYTUL}.htm"
 
-	echo -e '<html>\n<head>\n<title>Polska Biblioteka Internetowa</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${OUTPUT}"
+	echo -e '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">\n<html>\n<head>\n<title>'${AUTOR} - ${TYTUL}'</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${OUTPUT}"
 
 	for i in `ls -1 ${TMPDIR}/[0-9]*.html`; do
 		awk '/class=\"txt\"/ { print $0 }' $i >>"${OUTPUT}"
