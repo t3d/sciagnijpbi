@@ -42,6 +42,9 @@ DIGITS=`echo "$PAGENO" |wc -L`
 # check author and title
 TYTUL=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/[ \t]*$//'`
 AUTOR=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/[ \t]*$//'`
+if [ "$AUTOR" == "-" ] ; then
+	AUTOR="Autor nie podany"
+fi
 echo -e "\n[33mZnalazlem ksiazke:[0m"
 echo -e " Autor: $AUTOR \n Tytul: $TYTUL\n"
 rm -f "${TMPDIR}/cover.html"
