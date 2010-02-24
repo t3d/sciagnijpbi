@@ -40,14 +40,16 @@ PAGENO=`cat $TMPDIR/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
 DIGITS=`echo "$PAGENO" |wc -L`
 
 # check author and title
-TYTUL=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/[ \t]*$//'`
-AUTOR=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/[ \t]*$//'`
+TYTUL=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+AUTOR=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
 if [ "$AUTOR" == "-" ] ; then
 	AUTOR="Autor nie podany"
 fi
 echo -e "\n[33mZnalazlem ksiazke:[0m"
 echo -e " Autor: $AUTOR \n Tytul: $TYTUL\n"
 rm -f "${TMPDIR}/cover.html"
+AUTOR=`echo $AUTOR | tr ?: _-`
+TYTUL=`echo $TYTUL | tr ?: _-`
 
 # check whether book is in HTML or images
 PAGECOUNT=1
