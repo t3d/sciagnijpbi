@@ -5,7 +5,7 @@ Skrypt rozpoznaje i pobiera zarówno książki w postaci tekstowej (HTML),
 jak i zeskanowane książki w formacie jpg.
 
 Aby pobrać książkę, należy znać jej id z katalogu PBI.
-Dla ułatwienia, spis książek wraz ich id znajduje się w pliku 
+Dla ułatwienia, spis książek wraz z ich id znajduje się w pliku 
 Katalog_PBI.txt. Można też podejrzeć id książki podczas przeglądania 
 stron www PBI. Znajduje się ono w adresie okienka z widokiem strony 
 po znakach ?p=. Przykładowo dla książki "Dziwna Historia" Elizy 
