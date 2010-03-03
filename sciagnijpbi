@@ -93,9 +93,9 @@ else
 	sed -e 's/^[ \t]*<style.*<\/style>//' \
 		-e 's/ >/>/g' \
 		-e 's/ style="font-size: 100%" class="txt"//g' \
-		-e 's/<span>\([[:alnum:] ,.?!—:;]*\)<\/span>/\1/g' \
-		-e 's/<span><i>\([[:alnum:] ,.?!—:;]*\)<\/i><\/span>/<i>\1<\/i>/g' \
-		-e 's/<span><b>\([[:alnum:] ,.?!—:;]*\)<\/b><\/span>/<b>\1<\/b>/g' \
+		-e 's/<span>\([^<]*\)<\/span>/\1/g' \
+		-e 's/<span><i>\([^<]*\)<\/i><\/span>/<i>\1<\/i>/g' \
+		-e 's/<span><b>\([^<]*\)<\/b><\/span>/<b>\1<\/b>/g' \
 		-e 's/<\/i><i>//g' \
 		-e 's/<\/b><b>//g' \
 		-e 's/ style="text-align:left;"//g' \
