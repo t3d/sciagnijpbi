@@ -100,6 +100,7 @@ else
 		-e 's/<\/b><b>//g' \
 		-e 's/ style="text-align:left;"//g' \
 		-e 's/ class="title-[0-9]"//g' \
+		-e 's/&nbsp; / /g' \
 		-i "$OUTPUT"
 	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $OUTPUT"
 	rm -fr "$TMPDIR"
