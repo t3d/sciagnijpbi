@@ -103,8 +103,9 @@ else
 		-e 's/&nbsp; / /g' \
 		-e 's/ &nbsp;/ /g' \
 		-e 's/<b>\([ ,]*\)<\/b>/\1/g' \
-		-e 's/ *<\/div>/<\/div>/g' \
+		-e 's/\([\.?!";]\) *<\/div>/\1<\/div>/g' \
 		-i "$OUTPUT"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:], ]\)[-]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$OUTPUT"
 	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $OUTPUT"
 	rm -fr "$TMPDIR"
 fi
