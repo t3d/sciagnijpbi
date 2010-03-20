@@ -5,7 +5,7 @@
 #
 # based on sciagnijpbi.sh and sciagnijpbijpg.sh by raf_k <at> wp.pl
 
-TMPDIR=$(mktemp -d)
+tmpdir=$(mktemp -d)
 
 if [ -z $1 ] ; then
 	echo "Nie podales id ksiazki. Bez id nic nie sciagne."
@@ -16,79 +16,79 @@ if [ -z $1 ] ; then
 	echo
 	echo "Spis id jest rowniez w dolaczonym do skryptu katalogu"
 	echo -ne "\nPodaj id ksiazki, lub zero, by wyjsc: "
-	read BOOKID
-	if [ "$BOOKID" == "0" ] ; then
+	read bookid
+	if [ "$bookid" == "0" ] ; then
 		exit 1
 	fi
 else
-	BOOKID=$1;
+	bookid=$1;
 fi
 
 # check if given id is a number
-if echo $BOOKID | grep "^[0-9]*$">/dev/null; then
-	echo "id ksiazki $BOOKID"
+if echo $bookid | grep "^[0-9]*$">/dev/null; then
+	echo "id ksiazki $bookid"
 else
 	echo "niepoprawne id ksiazki!"
 	exit 1
 fi
 
-wget -O"$TMPDIR/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$BOOKID&s=&w=" 2>/dev/null
+wget -O"$tmpdir/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" 2>/dev/null
 
 # check number of pages
-PAGENO=`cat $TMPDIR/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
+pageno=`cat $tmpdir/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
 # check number digits needed
-DIGITS=`echo "$PAGENO" |wc -L`
+digits=`echo "$pageno" |wc -L`
 
 # check author and title
-TYTUL=`grep '<TD class=t11-red><STRONG>' $TMPDIR/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
-AUTOR=`grep "<TD class=t11-red>" $TMPDIR/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
-if [ "$AUTOR" == "-" ] ; then
-	AUTOR="Autor nie podany"
+tytul=`grep '<TD class=t11-red><STRONG>' $tmpdir/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+autor=`grep "<TD class=t11-red>" $tmpdir/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+if [ "$autor" == "-" ] ; then
+	autor="Autor nie podany"
 fi
 echo -e "\n[33mZnalazlem ksiazke:[0m"
-echo -e " Autor: $AUTOR \n Tytul: $TYTUL\n"
-rm -f "${TMPDIR}/cover.html"
-AUTOR=`echo $AUTOR | tr ?: _-`
-TYTUL=`echo $TYTUL | tr ?: _-`
+echo -e " Autor: $autor \n Tytul: $tytul\n"
+rm -f "${tmpdir}/cover.html"
+autor=`echo $autor | tr ?: _-`
+tytul=`echo $tytul | tr ?: _-`
 
 # check whether book is in HTML or images
-PAGECOUNT=1
-TEST=`wget -O- "http://www.pbi.edu.pl/content.php?p=${BOOKID}&s=${PAGECOUNT}" 2>/dev/null |grep 'id=imgview'`
-if [ "$TEST" != "" ] ; then
+pagecount=1
+test=`wget -O- "http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}" 2>/dev/null |grep 'id=imgview'`
+if [ "$test" != "" ] ; then
 	echo "pliki graficzne"
-	JPGPATH=`echo $TEST|sed 's/.*src="\(.*\)-.*/\1/'`
-	while [ $PAGECOUNT -le $PAGENO ] ; do
-		printf "\rSciagam strone $PAGECOUNT / $PAGENO "
-		JPGABSPATH=`printf "http://www.pbi.edu.pl/${JPGPATH}-%06d.jpg" $PAGECOUNT`
-		TARGETFILE=`echo $PAGECOUNT|awk {'printf "%0'${DIGITS}'d",$1'}`
-		wget -O "${TMPDIR}/${TARGETFILE}.jpg" $JPGABSPATH 2>/dev/null
-		PAGECOUNT=`expr $PAGECOUNT + 1`
+	jpegpath=`echo $test|sed 's/.*src="\(.*\)-.*/\1/'`
+	while [ $pagecount -le $pageno ] ; do
+		printf "\rSciagam strone $pagecount / $pageno "
+		jpegabspath=`printf "http://www.pbi.edu.pl/${jpegpath}-%06d.jpg" $pagecount`
+		targetfile=`echo $pagecount|awk {'printf "%0'${digits}'d",$1'}`
+		wget -O "${tmpdir}/${targetfile}.jpg" $jpegabspath 2>/dev/null
+		pagecount=`expr $pagecount + 1`
 	done
 	echo -e "[32m[ok][0m"
 
-	OUTDIR="${AUTOR} - ${TYTUL}"
-	mv -- "$TMPDIR" "${OUTDIR}"
-	echo -e "[33mPliki zapisano w katalogu:[0m ${OUTDIR}"
+	outdir="${autor} - ${tytul}"
+	mv -- "$tmpdir" "${outdir}"
+	echo -e "[33mPliki zapisano w katalogu:[0m ${outdir}"
 else
 	echo "pliki tekstowe"
-	while [ $PAGECOUNT -le $PAGENO ] ; do
-		source="http://www.pbi.edu.pl/content.php?p=${BOOKID}&s=${PAGECOUNT}&w="
-		TARGETFILE=`echo $PAGECOUNT|awk {'printf "%0'${DIGITS}'d",$1'}`
-		echo -ne "\rSciagam strone $PAGECOUNT / $PAGENO "
-		wget -O"${TMPDIR}/${TARGETFILE}.html" "$source" 2>/dev/null
-		PAGECOUNT=`expr $PAGECOUNT + 1`
+	while [ $pagecount -le $pageno ] ; do
+		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}&w="
+		targetfile=`echo $pagecount|awk {'printf "%0'${digits}'d",$1'}`
+		echo -ne "\rSciagam strone $pagecount / $pageno "
+		wget -O"${tmpdir}/${targetfile}.html" "$source" 2>/dev/null
+		pagecount=`expr $pagecount + 1`
 	done
 
 	echo -ne "[32m[ok][0m\nLacze pliki"
 
-	OUTPUT="${AUTOR} - ${TYTUL}.htm"
+	output="${autor} - ${tytul}.htm"
 
-	echo -e '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">\n<html>\n<head>\n<title>'${AUTOR} - ${TYTUL}'</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${OUTPUT}"
+	echo -e '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">\n<html>\n<head>\n<title>'${autor} - ${tytul}'</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${output}"
 
-	for i in `ls -1 ${TMPDIR}/[0-9]*.html`; do
-		awk '/class=\"txt\"/ { print $0 }' $i >>"${OUTPUT}"
+	for i in `ls -1 ${tmpdir}/[0-9]*.html`; do
+		awk '/class=\"txt\"/ { print $0 }' $i >>"${output}"
 	done
-	echo -e '</body>\n</html>' >>"${OUTPUT}"
+	echo -e '</body>\n</html>' >>"${output}"
 	echo -ne " [32m[ok][0m\nPoprawiam formatowanie"
 	sed -e 's/^[ \t]*<style.*<\/style>//' \
 		-e 's/ >/>/g' \
@@ -104,10 +104,10 @@ else
 		-e 's/ &nbsp;/ /g' \
 		-e 's/<b>\([ ,]*\)<\/b>/\1/g' \
 		-e 's/\([\.?!";]\) *<\/div>/\1<\/div>/g' \
-		-i "$OUTPUT"
-	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[ ]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1 \4/g' -i "$OUTPUT"
-	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[-]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$OUTPUT"
-	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $OUTPUT"
-	rm -fr "$TMPDIR"
+		-i "$output"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[ ]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1 \4/g' -i "$output"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[-]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$output"
+	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $output"
+	rm -fr "$tmpdir"
 fi
 
