@@ -106,7 +106,7 @@ else
 		-e 's/\([\.?!";]\) *<\/div>/\1<\/div>/g' \
 		-i "$output"
 	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[ ]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1 \4/g' -i "$output"
-	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[-]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$output"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)-\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$output"
 	echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $output"
 	rm -fr "$tmpdir"
 fi
