@@ -26,9 +26,9 @@ fi
 
 # check if given id is a number
 if echo $bookid | grep "^[0-9]*$">/dev/null; then
-	echo "id ksiazki $bookid"
+	echo "Id ksiazki $bookid"
 else
-	echo "niepoprawne id ksiazki!"
+	echo "Niepoprawne id ksiazki!"
 	exit 1
 fi
 
@@ -42,12 +42,12 @@ digits=`echo "$pageno" |wc -L`
 # check author and title
 tytul=`grep '<TD class=t11-red><STRONG>' $tmpdir/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
 autor=`grep "<TD class=t11-red>" $tmpdir/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+rm -f "${tmpdir}/cover.html"
 if [ "$autor" == "-" ] ; then
 	autor="Autor nie podany"
 fi
-echo -e "\n[33mZnalazlem ksiazke:[0m"
-echo -e " Autor: $autor \n Tytul: $tytul\n"
-rm -f "${tmpdir}/cover.html"
+echo -e "\nZnalazlem ksiazke:"
+echo -e " Autor: [33m${autor}[0m\n Tytul: [33m${tytul}[0m\n"
 autor=`echo $autor | tr ?: _-`
 tytul=`echo $tytul | tr ?: _-`
 
@@ -55,7 +55,7 @@ tytul=`echo $tytul | tr ?: _-`
 pagecount=1
 test=`wget -O- "http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}" 2>/dev/null |grep 'id=imgview'`
 if [ "$test" != "" ] ; then
-	echo "pliki graficzne"
+	echo "Pliki graficzne"
 	jpegpath=`echo $test|sed 's/.*src="\(.*\)-.*/\1/'`
 	while [ $pagecount -le $pageno ] ; do
 		printf "\rSciagam strone $pagecount / $pageno "
@@ -70,7 +70,7 @@ if [ "$test" != "" ] ; then
 	mv -- "$tmpdir" "${outdir}"
 	echo -e "[33mPliki zapisano w katalogu:[0m ${outdir}"
 else
-	echo "pliki tekstowe"
+	echo "Pliki tekstowe"
 	while [ $pagecount -le $pageno ] ; do
 		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}&w="
 		targetfile=`echo $pagecount|awk {'printf "%0'${digits}'d",$1'}`
