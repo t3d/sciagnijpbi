@@ -1,0 +1,33 @@
+#!/bin/bash
+# Copyright (C) 2010 Tomasz Dlugosz <tomek3d@gmail.com>
+#
+# Distributed under the terms of the GNU General Public License v3
+
+tmpdir=$(mktemp -d)
+output="${tmpdir}/output"
+tmpfile="${tmpdir}/tmp"
+
+if [ -z $1 ] ; then
+	output=Katalog_PBI.txt
+	:> $output
+else
+	output=$1
+fi
+echo Tworze katalog publikacji...
+
+adres=http://www.pbi.edu.pl/`wget -O - "http://www.pbi.edu.pl/katalog.html" 2>/dev/null | grep '<STRONG>POZYCJE</STRONG>' | sed -e 's/^.*href=\"//' -e 's/\">.*$//'`
+
+wget -O "${tmpdir}/strona.html" $adres 2>/dev/null
+
+ile_stron=`grep ' z <strong>' "${tmpdir}/strona.html" | head -n 1 | sed -e 's/^.* z <strong>//' -e 's/<\/strong>.*$//'`
+
+for (( i=1; i<=${ile_stron}; i++ ))
+do
+	:> $tmpfile
+	echo -ne "\rstrona $i / $ile_stron"
+	wget -O "${tmpdir}/strona.html" "${adres}&pg=${i}" 2>/dev/null
+	grep -A 1 ':showPublication(' "${tmpdir}/strona.html" | sed -e 's/^.*:showPublication(//' -e 's/, .*<strong> /|/' -e 's/<\/strong>.*$/|/' -e 's/^.*<b>//' -e 's/<\/b>.*$//' >> $tmpfile
+	cat $tmpfile >> $output
+done
+
+echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $output"
