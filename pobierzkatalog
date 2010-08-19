@@ -9,10 +9,12 @@ tmpfile="${tmpdir}/tmp"
 
 if [ -z $1 ] ; then
 	output=Katalog_PBI.txt
-	:> $output
 else
 	output=$1
 fi
+
+:> $output
+
 echo Tworze katalog publikacji...
 
 adres=http://www.pbi.edu.pl/`wget -O - "http://www.pbi.edu.pl/katalog.html" 2>/dev/null | grep '<STRONG>POZYCJE</STRONG>' | sed -e 's/^.*href=\"//' -e 's/\">.*$//'`
