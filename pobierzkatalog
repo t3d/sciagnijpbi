@@ -19,9 +19,9 @@ echo Tworze katalog publikacji...
 
 adres=http://www.pbi.edu.pl/`wget -O - "http://www.pbi.edu.pl/katalog.html" 2>/dev/null | grep '<STRONG>POZYCJE</STRONG>' | sed -e 's/^.*href=\"//' -e 's/\">.*$//'`
 
-wget -O "${tmpdir}/strona.html" $adres 2>/dev/null
 
-ile_stron=`grep ' z <strong>' "${tmpdir}/strona.html" | head -n 1 | sed -e 's/^.* z <strong>//' -e 's/<\/strong>.*$//'`
+
+ile_stron=`wget -O - $adres 2>/dev/null | grep ' z <strong>' | head -n 1 | sed -e 's/^.* z <strong>//' -e 's/<\/strong>.*$//'`
 
 for (( i=1; i<=${ile_stron}; i++ ))
 do
@@ -33,3 +33,5 @@ do
 done
 
 echo -e "[32m [ok][0m \n\n[33mZapisano plik:[0m $output"
+rm -rf "$tmpdir"
+
