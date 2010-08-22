@@ -28,7 +28,7 @@ do
 	:> $tmpfile
 	echo -ne "\rstrona $i / $ile_stron"
 	wget -O "${tmpdir}/strona.html" "${adres}&pg=${i}" 2>/dev/null
-	grep -A 1 ':showPublication(' "${tmpdir}/strona.html" | sed -e 's/^.*:showPublication(//' -e 's/, .*<strong> /|/' -e 's/<\/strong>.*$/|/' -e 's/^.*<b>//' -e 's/<\/b>.*$//' >> $tmpfile
+	grep -A 1 ':showPublication(' "${tmpdir}/strona.html" | sed -e 's/^.*:showPublication(//' -e 's/, .*<strong>/|/' -e 's/<\/strong>.*$/|/' -e 's/^.*<b>//' -e 's/<\/b>.*$//' >> $tmpfile
 	cat $tmpfile >> $output
 done
 
