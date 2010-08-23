@@ -15,6 +15,11 @@ http://www.pbi.edu.pl/book_reader.php?p=1870&s=1, zatem id to 1870.
 Id książki można podać jako parametr przy uruchamianiu skryptu, 
 bądź też wpisać po uruchomieniu skryptu.
 
+Można też wygenerować własnoręcznie aktualny katalog pozycji PBI.
+Słuzy do tego skrypt pobierzkatalog. 
+Dołączony plik z katalogem zawiera pozycje znajdujące się w PBI w dniu
+23 VIII 2010.
+
 Skrypt działa pod systemami typu UNIX, GNU/Linux i Mac OS 
 wyposażonymi w powłokę bash i program wget. 
 Użytkownicy systemów z rodziny windows mogą korzystać ze skryptu 
