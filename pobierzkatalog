@@ -19,8 +19,6 @@ echo Tworze katalog publikacji...
 
 adres=http://www.pbi.edu.pl/`wget -O - "http://www.pbi.edu.pl/katalog.html" 2>/dev/null | grep '<STRONG>POZYCJE</STRONG>' | sed -e 's/^.*href=\"//' -e 's/\">.*$//'`
 
-
-
 ile_stron=`wget -O - $adres 2>/dev/null | grep ' z <strong>' | head -n 1 | sed -e 's/^.* z <strong>//' -e 's/<\/strong>.*$//'`
 
 for (( i=1; i<=${ile_stron}; i++ ))
@@ -28,7 +26,7 @@ do
 	:> $tmpfile
 	echo -ne "\rstrona $i / $ile_stron"
 	wget -O "${tmpdir}/strona.html" "${adres}&pg=${i}" 2>/dev/null
-	grep -A 1 ':showPublication(' "${tmpdir}/strona.html" | sed -e 's/^.*:showPublication(//' -e 's/, .*<strong>/|/' -e 's/<\/strong>.*$/|/' -e 's/^.*<b>//' -e 's/<\/b>.*$//' >> $tmpfile
+	grep -A 1 ':showPublication(' "${tmpdir}/strona.html" | grep -v '^--' | sed -e 's/^.*:showPublication(//' -e 's/, .*<strong>/|/' -e 's/<\/strong>.*$/|/' -e 's/^.*<b>//' -e 's/<\/b>.*$//' >> $tmpfile
 	cat $tmpfile >> $output
 done
 
