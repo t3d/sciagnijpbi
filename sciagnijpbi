@@ -36,6 +36,11 @@ wget -O"$tmpdir/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" 2
 
 # check number of pages
 pageno=`cat $tmpdir/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
+if [ "$pageno" == "" ] ; then
+	echo "Nie ma pozycji o takim numerze!"
+	exit 1
+fi
+
 # check number digits needed
 digits=`echo "$pageno" |wc -L`
 
