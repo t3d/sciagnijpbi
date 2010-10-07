@@ -11,7 +11,7 @@ if [ -z $1 ] ; then
 	bookid=$(zenity --entry --title "Podaj id ksiazki" \
                  --text "Podaj id ksiazki, lub zero, by wyjsc:" )
 	
-	if [ "$bookid" == "0" ] && [ "$bookid" == "" ] ; then
+	if [ "$bookid" == "0" ] || [ "$bookid" == "" ] ; then
 		exit 1
 	fi
 else
