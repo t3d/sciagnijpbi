@@ -45,7 +45,7 @@ digits=`echo "$pageno" |wc -L`
 tytul=`grep '<TD class=t11-red><STRONG>' $tmpdir/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
 autor=`grep "<TD class=t11-red>" $tmpdir/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
 rm -f "${tmpdir}/cover.html"
-if [ "$autor" == "-" ] ; then
+if [ "$autor" == "" ] || [ "$autor" == "-" ] ; then
 	autor="Autor nie podany"
 fi
 echo -e "\nZnalazlem ksiazke:"
