@@ -8,11 +8,9 @@
 tmpdir=$(mktemp -d)
 
 if [ -z $1 ] ; then
-	echo "Nie podales id ksiazki. Bez id nic nie sciagne."
+	echo "Nie podales id ksiazki ani URL pod ktorym sie ona znajduje"
 	echo "Wejdz na strone www.pbi.edu.pl ,"
-	echo "otworz interesujaca Cie pozycje i znajdz w adresie"
-	echo '?p=XXXX np.'
-	echo 'http://www.pbi.edu.pl/content.php?p=50620&s=2&w='
+	echo "otworz interesujaca Cie pozycje i wpisz tu jej URL lub id"
 	echo
 	echo "Spis id jest rowniez w dolaczonym do skryptu katalogu"
 	echo -ne "\nPodaj id ksiazki, lub zero, by wyjsc: "
@@ -23,6 +21,9 @@ if [ -z $1 ] ; then
 else
 	bookid=$1;
 fi
+
+# get id out of URL
+bookid=`echo $bookid | sed -e 's/^http:\/\/www\.pbi\.edu\.pl\/.*\?p=//' -e 's/&.=.*$//'`
 
 # check if given id is a number
 if echo $bookid | grep "^[0-9]*$">/dev/null; then

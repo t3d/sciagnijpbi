@@ -4,13 +4,15 @@ Internetowej (www.pbi.edu.pl).
 Skrypt rozpoznaje i pobiera zarówno książki w postaci tekstowej (HTML), 
 jak i zeskanowane książki w formacie jpg.
 
-Aby pobrać książkę, należy znać jej id z katalogu PBI.
+Aby pobrać książkę, należy znać jej id z katalogu PBI lub jej URL.
 Dla ułatwienia, spis książek wraz z ich id znajduje się w pliku 
 Katalog_PBI.txt. Można też podejrzeć id książki podczas przeglądania 
 stron www PBI. Znajduje się ono w adresie okienka z widokiem strony 
 po znakach ?p=. Przykładowo dla książki "Dziwna Historia" Elizy 
 Orzeszkowej, adres ten to 
 http://www.pbi.edu.pl/book_reader.php?p=1870&s=1, zatem id to 1870.
+W przypadku podania URL jednej ze stron dotyczących książki
+(treść, lub dowolna ramka nawigacyjna), skrypt sam pobierze id z URL.
 
 Id książki można podać jako parametr przy uruchamianiu skryptu, 
 bądź też wpisać po uruchomieniu skryptu.

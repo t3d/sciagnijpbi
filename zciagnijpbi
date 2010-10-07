@@ -9,14 +9,17 @@ tmpdir=$(mktemp -d)
 
 if [ -z $1 ] ; then
 	bookid=$(zenity --entry --title "Podaj id ksiazki" \
-                 --text "Podaj id ksiazki, lub zero, by wyjsc:" )
+                 --text "Podaj id ksiazki lub jej URL z PBI:" )
 	
-	if [ "$bookid" == "0" ] || [ "$bookid" == "" ] ; then
+	if [ $? == "1" ] || [ "$bookid" == "" ] ; then
 		exit 1
 	fi
 else
 	bookid=$1;
 fi
+
+# get id out of URL
+bookid=`echo $bookid | sed -e 's/^http:\/\/www\.pbi\.edu\.pl\/.*\?p=//' -e 's/&.=.*$//'`
 
 # check if given id is a number
 if echo $bookid | grep "^[0-9]*$">/dev/null; then
