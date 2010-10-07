@@ -60,6 +60,10 @@ if [ "$test" != "" ] ; then
 	echo "Pliki graficzne"
 	jpegpath=`echo $test|sed 's/.*src="\(.*\)-.*/\1/'`
 	outdir=$(zenity --file-selection --directory --save --confirm-overwrite --filename="${autor} - ${tytul}")
+	if [ $? == "1" ]; then
+		rm -fr "$tmpdir"
+		exit 1
+	fi
 	(
 	while [ $pagecount -le $pageno ] ; do
 		echo $(($pagecount * 100/ $pageno))
@@ -78,8 +82,11 @@ if [ "$test" != "" ] ; then
 	zenity --info --text "Pliki zapisano w katalogu $outdir"
 else
 	echo "Pliki tekstowe"
-
 	output=$(zenity --file-selection --save --confirm-overwrite --filename="${autor} - ${tytul}.htm")
+	if [ $? == "1" ]; then
+		rm -fr "$tmpdir"
+		exit 1
+	fi
 	(
 	while [ $pagecount -le $pageno ] ; do
 		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}&w="
