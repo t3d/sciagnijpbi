@@ -1,0 +1,124 @@
+#!/bin/bash
+# Copyright (C) 2010 Tomasz Dlugosz <tomek3d@gmail.com>
+#
+# Distributed under the terms of the GNU General Public License v3
+#
+# based on sciagnijpbi.sh and sciagnijpbijpg.sh by raf_k <at> wp.pl
+
+tmpdir=$(mktemp -d)
+
+if [ -z $1 ] ; then
+	bookid=$(zenity --entry --title "Podaj id ksiazki" \
+                 --text "Podaj id ksiazki, lub zero, by wyjsc:" )
+	
+	if [ "$bookid" == "0" ] && [ "$bookid" == "" ] ; then
+		exit 1
+	fi
+else
+	bookid=$1;
+fi
+
+# check if given id is a number
+if echo $bookid | grep "^[0-9]*$">/dev/null; then
+	echo "Id ksiazki $bookid"
+else
+	zenity --error --title="Blad" --text "Niepoprawne id ksiazki!"
+	exit 1
+fi
+
+wget -O"$tmpdir/cover.html" "http://www.pbi.edu.pl/left_1.php?p=$bookid&s=&w=" 2>/dev/null
+
+# check number of pages
+pageno=`cat $tmpdir/cover.html | grep "var pages"|tr ";" " "| cut -d" " -f4`
+if [ "$pageno" == "" ] ; then
+	zenity --error --title="Blad" --text "Nie ma pozycji o takim numerze!"
+	exit 1
+fi
+
+# check number digits needed
+digits=`echo "$pageno" |wc -L`
+
+# check author and title
+tytul=`grep '<TD class=t11-red><STRONG>' $tmpdir/cover.html |tr "<>" "||"| cut -d"|" -f5 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+autor=`grep "<TD class=t11-red>" $tmpdir/cover.html |tail -n1|tr "<>" "||"| cut -d"|" -f3 | sed 's/^[ \t]*\(.*\)[ \t]*$/\1/'`
+rm -f "${tmpdir}/cover.html"
+if [ "$autor" == "-" ] ; then
+	autor="Autor nie podany"
+fi
+echo -e "\nZnalazlem ksiazke:"
+echo -e " Autor: [33m${autor}[0m\n Tytul: [33m${tytul}[0m\n"
+autor=`echo $autor | tr ?: _-`
+tytul=`echo $tytul | tr ?: _-`
+
+# check whether book is in HTML or images
+pagecount=1
+test=`wget -O- "http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}" 2>/dev/null |grep 'id=imgview'`
+if [ "$test" != "" ] ; then
+	echo "Pliki graficzne"
+	jpegpath=`echo $test|sed 's/.*src="\(.*\)-.*/\1/'`
+	outdir=$(zenity --file-selection --directory --save --confirm-overwrite --filename="${autor} - ${tytul}")
+	(
+	while [ $pagecount -le $pageno ] ; do
+		echo $(($pagecount * 100/ $pageno))
+		jpegabspath=`printf "http://www.pbi.edu.pl/${jpegpath}-%06d.jpg" $pagecount`
+		targetfile=`echo $pagecount|awk {'printf "%0'${digits}'d",$1'}`
+		wget -O "${tmpdir}/${targetfile}.jpg" $jpegabspath 2>/dev/null
+		pagecount=`expr $pagecount + 1`
+	done
+	echo 100 )|zenity --progress --title="Pobieranie ksiazki" --text="Pobieram:\n $autor - $tytul" --auto-close
+	if [ $? == "1" ]; then
+		rm -fr "$tmpdir"
+		exit 1
+	fi
+
+	mv ${tmpdir}/* "${outdir}"
+	zenity --info --text "Pliki zapisano w katalogu $outdir"
+else
+	echo "Pliki tekstowe"
+
+	output=$(zenity --file-selection --save --confirm-overwrite --filename="${autor} - ${tytul}.htm")
+	(
+	while [ $pagecount -le $pageno ] ; do
+		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}&w="
+		targetfile=`echo $pagecount|awk {'printf "%0'${digits}'d",$1'}`
+		echo $(( $pagecount *100 / $pageno ))
+		wget -O"${tmpdir}/${targetfile}.html" "$source" 2>/dev/null
+		pagecount=`expr $pagecount + 1`
+	done
+	echo 100) |zenity --progress --title="Pobieranie ksiazki" --text="Pobieram:\n $autor - $tytul" --auto-close
+	if [ $? == "1" ]; then
+		rm -fr "$tmpdir"
+		exit 1
+	fi
+
+	echo -ne "\nLacze pliki"
+
+	echo -e '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">\n<html>\n<head>\n<title>'${autor} - ${tytul}'</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${output}"
+
+	for i in `ls -1 ${tmpdir}/[0-9]*.html`; do
+		awk '/class=\"txt\"/ { print $0 }' $i >>"${output}"
+	done
+	echo -e '</body>\n</html>' >>"${output}"
+	echo -ne " [32m[ok][0m\nPoprawiam formatowanie"
+	sed -e 's/^[ \t]*<style.*<\/style>//' \
+		-e 's/ >/>/g' \
+		-e 's/ style="font-size: 100%" class="txt"//g' \
+		-e 's/<span>\([^<]*\)<\/span>/\1/g' \
+		-e 's/<span><i>\([^<]*\)<\/i><\/span>/<i>\1<\/i>/g' \
+		-e 's/<span><b>\([^<]*\)<\/b><\/span>/<b>\1<\/b>/g' \
+		-e 's/<\/i><i>//g' \
+		-e 's/<\/b><b>//g' \
+		-e 's/ style="text-align:left;"//g' \
+		-e 's/ class="title-[0-9]"//g' \
+		-e 's/&nbsp; / /g' \
+		-e 's/ &nbsp;/ /g' \
+		-e 's/<b>\([ ,]*\)<\/b>/\1/g' \
+		-e 's/\([\.?!";]\) *<\/div>/\1<\/div>/g' \
+		-i "$output"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)[ ]\?\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1 \4/g' -i "$output"
+	sed	-e ':a;N;$!ba;s/\([[:alnum:],]\)-\(<\/div><div>\)\?\(<span [^>]*>&nbsp;<\/span>\)\?<\/div>\n<div>\([[:alpha:]]\)/\1\4/g' -i "$output"
+	echo -e "[32m [ok][0m"
+	zenity --info --text "Zapisano plik $output"
+	rm -fr "$tmpdir"
+fi
+
