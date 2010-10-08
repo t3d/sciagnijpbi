@@ -3,6 +3,11 @@
 #
 # Distributed under the terms of the GNU General Public License v3
 
+if ! [ -a Katalog_PBI.txt ] || ! [ -a zciagnijpbi ] ; then
+	zenity --error --title="Blad" --text "Umiesc pliki Katalog_PBI.txt oraz zciagnijpbi\nw tym samym katalogu, co skrypt wyszukaj."
+	exit 1
+fi
+
 zapytanie=$(zenity --entry --title "Wyszukiwanie" --text "Podaj fragment tytulu lub nazwiska autora:")
 if [ $? == "1" ] ; then
         exit 1
@@ -15,7 +20,7 @@ if [ -s $tmpfile ] ; then
 	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
 
 	for i in `echo $do_pobrania | tr '|' '\n'`; do
-		./zciagnijpbi $i
+		sh zciagnijpbi $i
 	done
 else
 	zenity --error --title="Blad" --text "Nie ma pozycji z takim autorem ani tytulem!"
