@@ -12,7 +12,7 @@ tmpfile=$(mktemp)
 grep -i "$zapytanie" Katalog_PBI.txt > $tmpfile
 
 if [ -s $tmpfile ] ; then
-	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
+	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
 
 	for i in `echo $do_pobrania | tr '|' '\n'`; do
 		./zciagnijpbi $i
