@@ -1,0 +1,24 @@
+#!/bin/bash
+# Copyright (C) 2010 Tomasz Dlugosz <tomek3d@gmail.com>
+#
+# Distributed under the terms of the GNU General Public License v3
+
+zapytanie=$(zenity --entry --title "Wyszukiwanie" --text "Podaj fragment tytulu lub nazwiska autora:")
+if [ $? == "1" ] ; then
+        exit 1
+fi
+
+tmpfile=$(mktemp)
+grep -i "$zapytanie" Katalog_PBI.txt > $tmpfile
+
+if [ -s $tmpfile ] ; then
+	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
+
+	for i in `echo $do_pobrania | tr '|' '\n'`; do
+		./zciagnijpbi $i
+	done
+else
+	zenity --error --title="Blad" --text "Nie ma pozycji z takim autorem ani tytulem!"
+fi
+
+rm "$tmpfile"

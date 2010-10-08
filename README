@@ -1,32 +1,62 @@
-sciagnijpbi to skrypt do pobierania książek z Polskiej Biblioteki 
+sciagnijpbi to zestaw skryptów do pobierania książek z Polskiej Biblioteki
 Internetowej (www.pbi.edu.pl).
 
-Skrypt rozpoznaje i pobiera zarówno książki w postaci tekstowej (HTML), 
+Skrypty rozpoznają i pobierają zarówno książki w postaci tekstowej (HTML),
 jak i zeskanowane książki w formacie jpg.
 
-Aby pobrać książkę, należy znać jej id z katalogu PBI lub jej URL.
-Dla ułatwienia, spis książek wraz z ich id znajduje się w pliku 
-Katalog_PBI.txt. Można też podejrzeć id książki podczas przeglądania 
-stron www PBI. Znajduje się ono w adresie okienka z widokiem strony 
-po znakach ?p=. Przykładowo dla książki "Dziwna Historia" Elizy 
-Orzeszkowej, adres ten to 
+SPIS PLIKÓW
+=======================================================================
+
+Katalog_PBI.txt    - spis publikacji PBI w formacie id|tytuł|autor
+README             - plik, który czytasz
+pobierzkatalog     - skrypt do uaktualniania pliku Katalog_PBI.txt
+sciagnijpbi        - skrypt do pobierania publikacji po id lub URL,
+			wersja tekstowa
+zciagnijpbi        - skrypt do pobierania publikacji po id lub URL,
+			wersja z GUI
+wyszukaj           - skrypt z GUI do przeszukiwania katalogu
+			i automatycznego pobierania książek
+
+POBIERANIE KSIĄŻEK
+=======================================================================
+
+Aby pobrać książkę za pomocą skryptów sciagnijpbi lub zciagnijpbi,
+należy znać jej id z katalogu PBI lub jej URL.
+
+Alternatywnie można skorzystać z graficznej wyszukiwarki, która przeszuka
+katalog znajdujący w pliku Katalog_PBI.txt i pozwoli nam wybrać pozycje
+do pobrania.
+
+ID I URL KSIĄŻKI
+=======================================================================
+
+Książĸi w PBI mają przydzielony identyfikator id. Znajduje się on m.in.
+w adresie okienka z widokiem strony publikacji, po znakach "?p=".
+Przykładowo dla książki "Dziwna Historia" Elizy Orzeszkowej, adres ten to
 http://www.pbi.edu.pl/book_reader.php?p=1870&s=1, zatem id to 1870.
+
 W przypadku podania URL jednej ze stron dotyczących książki
 (treść, lub dowolna ramka nawigacyjna), skrypt sam pobierze id z URL.
 
-Id książki można podać jako parametr przy uruchamianiu skryptu, 
+Id książki można podać jako parametr przy uruchamianiu skryptu,
 bądź też wpisać po uruchomieniu skryptu.
 
-Można też wygenerować własnoręcznie aktualny katalog pozycji PBI.
-Słuzy do tego skrypt pobierzkatalog. 
+KATALOG
+=======================================================================
+
 Dołączony plik z katalogem zawiera pozycje znajdujące się w PBI w dniu
 23 VIII 2010.
+
+Można też wygenerować własnoręcznie aktualny katalog pozycji PBI.
+Słuzy do tego skrypt pobierzkatalog.
+
+WYMAGANIA SYSTEMOWE
+=======================================================================
 
 Skrypt działa pod systemami typu UNIX, GNU/Linux i Mac OS 
 wyposażonymi w powłokę bash i program wget. 
 Użytkownicy systemów z rodziny windows mogą korzystać ze skryptu 
 po zainstalowaniu programu cygwin (www.cygwin.com) wraz z pakietem wget.
 
-Możliwe jest także skorzystanie z wersji skryptu z graficznym
-interfejsem, zciagnijpbi. Skrypt w tej wersji wymaga dodatkowo pakietu
-zenity.
+Do działania skryptów z graficznym interfejsem użytkownika, tzn. zciagnijpbi
+i wyszukaj wymagany jest dodatkowo pakiet zenity.
