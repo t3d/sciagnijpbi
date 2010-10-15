@@ -3,7 +3,9 @@
 #
 # Distributed under the terms of the GNU General Public License v3
 
-if ! [ -a Katalog_PBI.txt ] || ! [ -a zciagnijpbi ] ; then
+my_path=`dirname $0`
+
+if ! [ -a ${my_path}/Katalog_PBI.txt ] || ! [ -a ${my_path}/zciagnijpbi ] ; then
 	zenity --error --title="Blad" --text "Umiesc pliki Katalog_PBI.txt oraz zciagnijpbi\nw tym samym katalogu, co skrypt wyszukaj."
 	exit 1
 fi
@@ -14,13 +16,13 @@ if [ $? == "1" ] ; then
 fi
 
 tmpfile=$(mktemp)
-grep -i "$query" Katalog_PBI.txt > $tmpfile
+grep -i "$query" ${my_path}/Katalog_PBI.txt > $tmpfile
 
 if [ -s $tmpfile ] ; then
 	to_get=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
 
 	for i in `echo $to_get | tr '|' '\n'`; do
-		bash zciagnijpbi $i
+		bash ${my_path}/zciagnijpbi $i
 	done
 else
 	zenity --error --title="Blad" --text "Nie ma pozycji z takim autorem ani tytulem!"
