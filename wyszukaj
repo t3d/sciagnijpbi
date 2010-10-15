@@ -20,7 +20,7 @@ if [ -s $tmpfile ] ; then
 	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
 
 	for i in `echo $do_pobrania | tr '|' '\n'`; do
-		sh zciagnijpbi $i
+		bash zciagnijpbi $i
 	done
 else
 	zenity --error --title="Blad" --text "Nie ma pozycji z takim autorem ani tytulem!"
