@@ -8,18 +8,18 @@ if ! [ -a Katalog_PBI.txt ] || ! [ -a zciagnijpbi ] ; then
 	exit 1
 fi
 
-zapytanie=$(zenity --entry --title "Wyszukiwanie" --text "Podaj fragment tytulu lub nazwiska autora:")
+query=$(zenity --entry --title "Wyszukiwanie" --text "Podaj fragment tytulu lub nazwiska autora:")
 if [ $? == "1" ] ; then
         exit 1
 fi
 
 tmpfile=$(mktemp)
-grep -i "$zapytanie" Katalog_PBI.txt > $tmpfile
+grep -i "$query" Katalog_PBI.txt > $tmpfile
 
 if [ -s $tmpfile ] ; then
-	do_pobrania=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
+	to_get=$(cat $tmpfile | sed -e 's/^/FALSE\n/' | tr '|' '\n' | zenity --list --width=650 --height=450 --text "Wybierz ksiazki do pobrania" --checklist --column "Wybór" --column "id" --column "Tytul" --column "autor" )
 
-	for i in `echo $do_pobrania | tr '|' '\n'`; do
+	for i in `echo $to_get | tr '|' '\n'`; do
 		bash zciagnijpbi $i
 	done
 else
