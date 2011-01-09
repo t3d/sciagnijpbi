@@ -87,6 +87,10 @@ else
 		rm -fr "$tmpdir"
 		exit 1
 	fi
+
+# make use of possible ToC
+	toc=`wget -O- "http://www.pbi.edu.pl/left_2.php?p=${bookid}" 2>/dev/null | grep '<A'`
+
 	(
 	while [ $pagecount -le $pageno ] ; do
 		source="http://www.pbi.edu.pl/content.php?p=${bookid}&s=${pagecount}&w="
@@ -105,9 +109,26 @@ else
 
 	echo -e '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">\n<html>\n<head>\n<title>'${autor} - ${tytul}'</title>\n<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">\n</head>\n<body>' >"${output}"
 
-	for i in `ls -1 ${tmpdir}/[0-9]*.html`; do
-		awk '/class=\"txt\"/ { print $0 }' $i >>"${output}"
-	done
+	if [ "$toc" != "" ] ; then
+		echo "$toc" > "${tmpdir}/toc"
+		echo -e "<center>\nSpis treści\n<br>\n" >>"${output}"
+		echo -e "$toc" | sed -e 's/<\/\?span[^>]*>//g' -e 's/<\/\?T.> *//g' -e 's/class=[^ ]* //' -e 's/^[ \t]*//' -e "s/javascript:page('\([0-9]*\)');/#s\1/" -e 's/$/<br>/' >>"${output}"
+		echo -e "</center>\n<br>\n<br>">>"${output}"
+
+		for i in `ls -1 ${tmpdir}/[0-9]*.html`; do
+			pagename=`basename "${i%%\.html}" | sed -e 's/^0*//g'`
+			test=`grep "page('${pagename}')" "${tmpdir}/toc"`
+			if [ "$test" != "" ] ; then
+				echo -e "<br>\n<br>\n<a name=\"s${pagename}\"></a>" >>"${output}"
+			fi
+			awk '/class=\"txt\"/ { print $0 }' $i >>"${output}"
+		done
+	else
+		for i in `ls -1 ${tmpdir}/[0-9]*.html`; do
+			awk '/class=\"txt\"/ { print $0 }' $i >>"${output}"
+		done
+	fi
+
 	echo -e '</body>\n</html>' >>"${output}"
 	echo -ne " [32m[ok][0m\nPoprawiam formatowanie"
 	sed -e 's/^[ \t]*<style.*<\/style>//' \
