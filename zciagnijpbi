@@ -9,7 +9,7 @@ tmpdir=$(mktemp -d)
 
 if [ -z $1 ] ; then
 	bookid=$(zenity --entry --title "Podaj id ksiazki" \
-                 --text "Podaj id ksiazki lub jej URL z PBI:" )
+				 --text "Podaj id ksiazki lub jej URL z PBI:" )
 	
 	if [ $? == "1" ] || [ "$bookid" == "" ] ; then
 		exit 1
