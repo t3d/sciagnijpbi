@@ -13,7 +13,7 @@ if [ -z $1 ] ; then
 	echo "otworz interesujaca Cie pozycje i wpisz tu jej URL lub id"
 	echo
 	echo "Spis id jest rowniez w dolaczonym do skryptu katalogu"
-	echo -ne "\nPodaj id ksiazki, lub zero, by wyjsc: "
+	echo -ne "\nPodaj id ksiazki lub zero, by wyjsc: "
 	read bookid
 	if [ "$bookid" == "0" ] ; then
 		exit 1
